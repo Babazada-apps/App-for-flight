@@ -29,3 +29,52 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 input[type="time"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
+
+/* PDF/Print üçün xüsusi tənzimləmələr */
+@media print {
+  @page {
+    size: landscape; /* Səhifəni üfüqi (landscape) formatda etmək */
+    margin: 10mm;
+  }
+  
+  body, html {
+    height: auto !important;
+    overflow: visible !important;
+    background-color: white !important;
+  }
+
+  main {
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  
+  /* Cədvəl üçün genişliyi 100% edib, fixed əvəzinə auto tətbiq edirik ki vərəqə sığsın */
+  table {
+    width: 100% !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Rənglərin və arxa fonların çapda (PDF) düzgün düşməsi üçün */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Lazımsız qıraq boşluqlarını və scroll-ları gizlədirik */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Sətirlərin hündürlüyünü çap üçün bir qədər azaldırıq */
+  th, td {
+    padding: 4px 6px !important;
+    font-size: 11px !important;
+  }
+
+  input {
+    font-size: 11px !important;
+    padding: 0 !important;
+  }
+}
