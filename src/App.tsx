@@ -12,33 +12,39 @@ import { Login } from './components/Login';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('atlas_token'));
+  const [role, setRole] = useState<string | null>(localStorage.getItem('atlas_role'));
   
-  const handleLogin = (newToken: string) => {
+  const handleLogin = (newToken: string, newRole: string) => {
     localStorage.setItem('atlas_token', newToken);
+    localStorage.setItem('atlas_role', newRole);
     setToken(newToken);
+    setRole(newRole);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('atlas_token');
+    localStorage.removeItem('atlas_role');
     setToken(null);
+    setRole(null);
   };
 
   if (!token) {
     return <Login onLogin={handleLogin} />;
   }
 
-  return <MainApp token={token} onLogout={handleLogout} />;
+  return <MainApp token={token} role={role || 'user'} onLogout={handleLogout} />;
 }
 
-function MainApp({ token, onLogout }: { token: string, onLogout: () => void }) {
+function MainApp({ token, role, onLogout }: { token: string, role: string, onLogout: () => void }) {
   const { flights, addFlight, updateFlight, deleteFlight, isLoaded, error } = useFlights(token, onLogout);
+  const isAdmin = role === 'admin';
 
-  // Layihə açılanda boşdursa 1 sətir əlavə edək
+  // Layihə açılanda boşdursa 1 sətir əlavə edək (yalnız admin üçün)
   useEffect(() => {
-    if (isLoaded && flights.length === 0) {
+    if (isLoaded && flights.length === 0 && isAdmin) {
       addFlight();
     }
-  }, [isLoaded, flights.length, addFlight]);
+  }, [isLoaded, flights.length, addFlight, isAdmin]);
 
   if (!isLoaded) return <div className="h-screen flex items-center justify-center bg-[#fdfcf9]">Yüklənir...</div>;
 
@@ -71,10 +77,11 @@ function MainApp({ token, onLogout }: { token: string, onLogout: () => void }) {
           flights={flights} 
           onUpdate={updateFlight} 
           onDelete={deleteFlight} 
+          isAdmin={isAdmin}
         />
       </main>
 
-      <Footer flights={flights} onAddFlight={addFlight} />
+      <Footer flights={flights} onAddFlight={addFlight} isAdmin={isAdmin} />
     </div>
   );
 }
