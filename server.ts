@@ -7,7 +7,8 @@ import jwt from "jsonwebtoken";
 import cors from "cors";
 
 // Optional: Fallback password and secret for local testing
-const APP_PASSWORD = process.env.APP_PASSWORD || "atlas123";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin";
+const USER_PASSWORD = process.env.USER_PASSWORD || "user";
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-jwt-key";
 
 // In-memory data store for flights
@@ -32,9 +33,12 @@ async function startServer() {
   app.post("/api/login", (req, res) => {
     const { password } = req.body;
     
-    if (password === APP_PASSWORD) {
-      const token = jwt.sign({ authenticated: true }, JWT_SECRET, { expiresIn: '7d' });
-      res.json({ token });
+    if (password === ADMIN_PASSWORD) {
+      const token = jwt.sign({ authenticated: true, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
+      res.json({ token, role: 'admin' });
+    } else if (password === USER_PASSWORD) {
+      const token = jwt.sign({ authenticated: true, role: 'user' }, JWT_SECRET, { expiresIn: '7d' });
+      res.json({ token, role: 'user' });
     } else {
       res.status(401).json({ error: "Yanlış şifrə!" });
     }
@@ -82,12 +86,14 @@ async function startServer() {
 
     // When client sends new flight
     socket.on("addFlight", (flight) => {
+      if (socket.data.user?.role !== 'admin') return;
       flights.push(flight);
       io.emit("flightsUpdated", flights);
     });
 
     // When client updates existing flight
     socket.on("updateFlight", (data) => {
+      if (socket.data.user?.role !== 'admin') return;
       const { id, field, value, totalFlightTime, updatedAt } = data;
       flights = flights.map(f => {
         if (f.id === id) {
@@ -105,6 +111,7 @@ async function startServer() {
 
     // When client deletes flight
     socket.on("deleteFlight", (id) => {
+      if (socket.data.user?.role !== 'admin') return;
       flights = flights.filter(f => f.id !== id);
       io.emit("flightsUpdated", flights);
     });
