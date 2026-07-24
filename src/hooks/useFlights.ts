@@ -1,32 +1,50 @@
 import { useState, useEffect, useCallback } from 'react';
+import { io, Socket } from 'socket.io-client';
 import { Flight } from '../types';
 import { calculateFlightTime, generateId } from '../utils';
 
-// Firebase quraşdırması ləğv edildiyi üçün, localStorage istifadə edirik
-const STORAGE_KEY = 'aviation_flights_data';
-
-export function useFlights() {
+export function useFlights(token: string, onLogout: () => void) {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState('');
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setFlights(JSON.parse(stored));
-      } catch (e) {
-        console.error('Failed to parse flights from localStorage');
-      }
-    }
-    setIsLoaded(true);
-  }, []);
+    // Initialize Socket
+    const newSocket = io({
+      auth: { token }
+    });
 
-  const saveFlights = useCallback((newFlights: Flight[]) => {
-    setFlights(newFlights);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newFlights));
-  }, []);
+    newSocket.on('connect', () => {
+      setError('');
+      // Request initial flights
+      newSocket.emit('getFlights', (data: Flight[]) => {
+        setFlights(data);
+        setIsLoaded(true);
+      });
+    });
+
+    newSocket.on('connect_error', (err) => {
+      if (err.message === 'Authentication error') {
+        onLogout();
+      } else {
+        setError('Bağlantı xətası: ' + err.message);
+      }
+    });
+
+    newSocket.on('flightsUpdated', (updatedFlights: Flight[]) => {
+      setFlights(updatedFlights);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [token, onLogout]);
 
   const addFlight = useCallback(() => {
+    if (!socket) return;
     const newFlight: Flight = {
       id: generateId(),
       aircraft: '',
@@ -42,32 +60,40 @@ export function useFlights() {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-    saveFlights([...flights, newFlight]);
-  }, [flights, saveFlights]);
+    
+    // Optymistik UI update (optional, but since we broadcast we might just emit)
+    // To avoid lag, we could update local state first, but simple emit is safer for LAN
+    socket.emit('addFlight', newFlight);
+  }, [socket]);
 
   const updateFlight = useCallback((id: string, field: keyof Flight, value: string) => {
-    saveFlights(
-      flights.map(flight => {
-        if (flight.id !== id) return flight;
-        
-        const updatedFlight = { ...flight, [field]: value, updatedAt: Date.now() };
-        
-        // Avtomatik uçuş vaxtı hesablanması
-        if (field === 'departureTime' || field === 'arrivalTime') {
-          updatedFlight.totalFlightTime = calculateFlightTime(
-            updatedFlight.departureTime, 
-            updatedFlight.arrivalTime
-          );
-        }
-        
-        return updatedFlight;
-      })
-    );
-  }, [flights, saveFlights]);
+    if (!socket) return;
+
+    // Find the flight to calculate total time locally before sending
+    const flight = flights.find(f => f.id === id);
+    if (!flight) return;
+
+    let totalFlightTime = flight.totalFlightTime;
+    
+    if (field === 'departureTime' || field === 'arrivalTime') {
+      const dep = field === 'departureTime' ? value : flight.departureTime;
+      const arr = field === 'arrivalTime' ? value : flight.arrivalTime;
+      totalFlightTime = calculateFlightTime(dep, arr);
+    }
+
+    socket.emit('updateFlight', {
+      id,
+      field,
+      value,
+      totalFlightTime,
+      updatedAt: Date.now()
+    });
+  }, [flights, socket]);
 
   const deleteFlight = useCallback((id: string) => {
-    saveFlights(flights.filter(f => f.id !== id));
-  }, [flights, saveFlights]);
+    if (!socket) return;
+    socket.emit('deleteFlight', id);
+  }, [socket]);
 
-  return { flights, addFlight, updateFlight, deleteFlight, isLoaded };
+  return { flights, addFlight, updateFlight, deleteFlight, isLoaded, error };
 }
