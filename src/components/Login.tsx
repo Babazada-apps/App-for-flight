@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plane } from 'lucide-react';
 
 interface LoginProps {
-  onLogin: (token: string) => void;
+  onLogin: (token: string, role: string) => void;
 }
 
 export function Login({ onLogin }: LoginProps) {
@@ -25,7 +25,7 @@ export function Login({ onLogin }: LoginProps) {
       const data = await res.json();
 
       if (res.ok && data.token) {
-        onLogin(data.token);
+        onLogin(data.token, data.role);
       } else {
         setError(data.error || 'Giriş uğursuz oldu');
       }
