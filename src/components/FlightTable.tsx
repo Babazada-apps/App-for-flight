@@ -6,9 +6,10 @@ interface FlightTableProps {
   flights: Flight[];
   onUpdate: (id: string, field: keyof Flight, value: string) => void;
   onDelete: (id: string) => void;
+  isAdmin: boolean;
 }
 
-export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
+export function FlightTable({ flights, onUpdate, onDelete, isAdmin }: FlightTableProps) {
   const getRowStatus = (flight: Flight) => {
     const hasDep = !!flight.departureTime;
     const hasArr = !!flight.arrivalTime;
@@ -34,13 +35,13 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
     const status = getRowStatus(flight);
     switch (status) {
       case 'completed':
-        return 'bg-[#00c907]/10 text-[#1a1a1a]';
+        return 'bg-[#00c907]/10 shadow-[inset_4px_0_12px_#00c90733] border-l-[4px] border-[#00c907] text-[#1a1a1a]';
       case 'inflight':
-        return 'bg-[#2a00a1]/10 text-[#2a00a1] animate-pulse-subtle';
+        return 'bg-[#2a00a1]/10 shadow-[inset_4px_0_16px_#2a00a14d] border-l-[4px] border-[#2a00a1] text-[#2a00a1] animate-pulse-subtle';
       case 'waiting':
-        return 'bg-[#e6b800]/15 text-[#1a1a1a]';
+        return 'bg-[#e6b800]/15 shadow-[inset_4px_0_12px_#e6b8004d] border-l-[4px] border-[#e6b800] text-[#1a1a1a]';
       default:
-        return 'bg-white text-[#1a1a1a]';
+        return 'bg-white text-[#1a1a1a] border-l-[4px] border-transparent';
     }
   };
 
@@ -78,7 +79,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.aircraft}
                     onChange={(e) => onUpdate(flight.id, 'aircraft', e.target.value)}
                     placeholder="Hava gəmisi..."
-                    className="w-full bg-transparent outline-none placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -87,7 +89,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.tailNumber}
                     onChange={(e) => onUpdate(flight.id, 'tailNumber', e.target.value)}
                     placeholder="Bort №"
-                    className="w-full bg-transparent outline-none placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -96,7 +99,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.callSign}
                     onChange={(e) => onUpdate(flight.id, 'callSign', e.target.value)}
                     placeholder="Çağırış"
-                    className="w-full bg-transparent outline-none placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -105,7 +109,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.crew}
                     onChange={(e) => onUpdate(flight.id, 'crew', e.target.value)}
                     placeholder="Heyət..."
-                    className="w-full bg-transparent outline-none placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -114,7 +119,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.purpose}
                     onChange={(e) => onUpdate(flight.id, 'purpose', e.target.value)}
                     placeholder="Məqsəd"
-                    className="w-full bg-transparent outline-none placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -123,7 +129,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.departureAerodrome}
                     onChange={(e) => onUpdate(flight.id, 'departureAerodrome', e.target.value)}
                     placeholder="Qalxış"
-                    className="w-full bg-transparent outline-none uppercase placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none uppercase placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -132,7 +139,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     value={flight.arrivalAerodrome}
                     onChange={(e) => onUpdate(flight.id, 'arrivalAerodrome', e.target.value)}
                     placeholder="Enmə"
-                    className="w-full bg-transparent outline-none uppercase placeholder:text-black/30"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none uppercase placeholder:text-black/30 disabled:opacity-80"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -140,7 +148,8 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     type="time"
                     value={flight.departureTime}
                     onChange={(e) => onUpdate(flight.id, 'departureTime', e.target.value)}
-                    className="w-full bg-transparent outline-none cursor-pointer font-mono"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none cursor-pointer font-mono disabled:opacity-80 disabled:cursor-default"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px]">
@@ -148,20 +157,23 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
                     type="time"
                     value={flight.arrivalTime}
                     onChange={(e) => onUpdate(flight.id, 'arrivalTime', e.target.value)}
-                    className="w-full bg-transparent outline-none cursor-pointer font-mono"
+                    disabled={!isAdmin}
+                    className="w-full bg-transparent outline-none cursor-pointer font-mono disabled:opacity-80 disabled:cursor-default"
                   />
                 </td>
                 <td className="px-2 py-2 text-[13px] font-bold font-mono">
                   {flight.totalFlightTime || '-'}
                 </td>
                 <td className="px-2 py-2 text-center print:hidden">
-                  <button
-                    onClick={() => onDelete(flight.id)}
-                    className="p-1 text-red-500 hover:bg-red-50 hover:text-red-700 rounded opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
-                    title="Sətri sil"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => onDelete(flight.id)}
+                      className="p-1 text-red-500 hover:bg-red-50 hover:text-red-700 rounded opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                      title="Sətri sil"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))
