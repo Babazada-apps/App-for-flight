@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-pulse-subtle: pulse-subtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+}
+
+@layer base {
+  body {
+    background-color: #fdfcf9;
+  }
+}
+
+/* Chrome, Safari, Edge, Opera üçün time input ikonunu gizlətmək (istəyə bağlı) */
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.2s;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
