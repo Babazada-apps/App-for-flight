@@ -6,9 +6,10 @@ import { getCompletedFlightsCount, sumFlightTimes } from '../utils';
 interface FooterProps {
   flights: Flight[];
   onAddFlight: () => void;
+  isAdmin: boolean;
 }
 
-export function Footer({ flights, onAddFlight }: FooterProps) {
+export function Footer({ flights, onAddFlight, isAdmin }: FooterProps) {
   const completedCount = getCompletedFlightsCount(flights);
   const totalTimeStr = sumFlightTimes(flights);
 
@@ -37,13 +38,15 @@ export function Footer({ flights, onAddFlight }: FooterProps) {
           <FileOutput className="w-4 h-4" />
           <span>İxrac (PDF)</span>
         </button>
-        <button
-          onClick={onAddFlight}
-          className="flex items-center gap-2 px-6 py-2 bg-[#1a1a1a] text-white rounded-lg hover:bg-black transition-colors font-medium text-sm shadow-lg shadow-black/10"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Yeni Sətir</span>
-        </button>
+        {isAdmin && (
+          <button
+            onClick={onAddFlight}
+            className="flex items-center gap-2 px-6 py-2 bg-[#1a1a1a] text-white rounded-lg hover:bg-black transition-colors font-medium text-sm shadow-lg shadow-black/10"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Yeni Sətir</span>
+          </button>
+        )}
       </div>
     </footer>
   );
