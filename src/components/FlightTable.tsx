@@ -34,11 +34,11 @@ export function FlightTable({ flights, onUpdate, onDelete }: FlightTableProps) {
     const status = getRowStatus(flight);
     switch (status) {
       case 'completed':
-        return 'bg-[#00FF09]/10 text-[#1a1a1a]';
+        return 'bg-[#00c907]/10 text-[#1a1a1a]';
       case 'inflight':
-        return 'bg-[#1D0070]/5 text-[#1D0070] animate-pulse-subtle';
+        return 'bg-[#2a00a1]/10 text-[#2a00a1] animate-pulse-subtle';
       case 'waiting':
-        return 'bg-[#F7FF00]/20 text-[#1a1a1a]';
+        return 'bg-[#e6b800]/15 text-[#1a1a1a]';
       default:
         return 'bg-white text-[#1a1a1a]';
     }
