@@ -28,15 +28,15 @@ export default function App() {
       <main className="flex-1 overflow-auto px-6 pt-4">
         <div className="flex items-center gap-6 mb-4 px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider print:hidden">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#00FF09]/20 border border-[#00FF09]/50"></div>
+            <div className="w-3 h-3 rounded-full bg-[#00c907] shadow-[0_0_8px_#00c907]"></div>
             <span>Tamamlanıb</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#1D0070]/10 border border-[#1D0070]/30 animate-pulse-subtle"></div>
+            <div className="w-3 h-3 rounded-full bg-[#2a00a1] shadow-[0_0_8px_#2a00a1] animate-pulse-subtle"></div>
             <span>Uçuşda</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#F7FF00]/40 border border-[#F7FF00]/60"></div>
+            <div className="w-3 h-3 rounded-full bg-[#e6b800] shadow-[0_0_8px_#e6b800]"></div>
             <span>Gözləyir</span>
           </div>
         </div>
