@@ -27,7 +27,7 @@ export function Header() {
         <div className="bg-[#1a1a1a] p-2 rounded-lg">
           <Plane className="w-6 h-6 text-[#fdfcf9] rotate-45" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tighter text-[#1a1a1a]">UÇUŞ</h1>
+        <h1 className="text-2xl font-bold tracking-tighter text-[#1a1a1a]">ATLAS uçuşlara nəzarət sistemi</h1>
       </div>
       <div className="text-right">
         <div className="text-sm font-medium text-gray-500 uppercase">Bakı, Azərbaycan</div>
